@@ -27,6 +27,11 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import HomeScreen from './src/screens/HomeScreen';
+import LoginScreen from './src/screens/LoginScreen';
+
 import {initializeApp} from 'firebase/app';
 import {
   getAuth,
@@ -35,9 +40,12 @@ import {
 } from 'firebase/auth';
 import {firebaseConfig} from './src/firebaseConfig';
 
+import AppNavigator from './src/navigation/AppNavigator';
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const Stack = createStackNavigator();
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -113,6 +121,13 @@ function App(): React.JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <Header />
+        <AppNavigator />
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,

@@ -75,3 +75,19 @@ yarn-error.log
 
 # Firebase configuration
 .env
+
+# Logs
+logs
+*.log
+
+# Dependency directories
+ios/Pods/
+android/.gradle/
+android/app/build/
+
+# Temporary files
+.temp/
+
+# Build directories
+ios/build/
+android/build/
