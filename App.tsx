@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -13,6 +13,8 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
+  Button,
   useColorScheme,
   View,
 } from 'react-native';
@@ -24,6 +26,18 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+import {initializeApp} from 'firebase/app';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import {firebaseConfig} from './src/firebaseConfig';
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -62,6 +76,33 @@ function App(): React.JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSignUp = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        // Signed in
+        const user = userCredential.user;
+        console.log('User signed up:', user);
+      })
+      .catch(error => {
+        console.error('Error signing up:', error);
+      });
+  };
+
+  const handleSignIn = () => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        // Signed in
+        const user = userCredential.user;
+        console.log('User signed in:', user);
+      })
+      .catch(error => {
+        console.error('Error signing in:', error);
+      });
+  };
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -90,6 +131,23 @@ function App(): React.JSX.Element {
             Read the docs to discover what to do next:
           </Section>
           <LearnMoreLinks />
+          <Section title="Firebase Authentication">
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+            <Button title="Sign Up" onPress={handleSignUp} />
+            <Button title="Sign In" onPress={handleSignIn} />
+          </Section>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -112,6 +170,13 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
 });
 
